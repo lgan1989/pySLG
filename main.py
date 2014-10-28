@@ -106,7 +106,7 @@ def main():
             for p in ai_controller.pawn_list:
                 if not p.turn_finished and p.has_ai:
                     if control.status == control.CONTROL_STATUS_IDlE:
-                        ai_controller.take_action()
+                        ai_controller.take_action(p)
                         if p and  p.next_move:
                             top = p.next_move[0]
                             p.next_move.pop(0)
@@ -118,11 +118,13 @@ def main():
                             elif action_type == ai.AI_ACTION_ATTACK:
                                 logic_controller.process_player_action( p, action_target )
                                 control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
+                        print p.hero.name.encode('utf-8') , ' not finished' , p.next_move , 'control status: ' , control.status
+                        flag = True
+                        break
                     elif control.status == control.CONTROL_STATUS_PAWN_MOVED:
                         control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
                     flag = True
-                    #print p.hero.name.encode('utf-8') , ' not finished' , p.next_move , 'control status: ' , control.status
-                    break
+
             if not flag:
                 control.status = control.CONTROL_STATUS_TURN_FINISHING
 

@@ -102,28 +102,28 @@ class Gui:
         self.main_window_row_number = current_map.tile_row_number
         self.main_window_col_number = current_map.tile_col_number
 
-        self.face_frame = self.get_image_source("face_frame.bmp", (51, 51, 51))
+        self.face_frame = self.get_image_source("image/gui/face_frame.bmp", (51, 51, 51))
         self.face_border_position = (current_map.map_width, 0)
         self.face_position = (current_map.map_width + 8, 8)
         self.lvl_icon_position = (current_map.map_width + 20, 315)
-        self.lvl_font = pygame.font.Font('BELL.TTF', 27)
-        self.quote_font = pygame.font.Font('simkai.ttf', 16)
+        self.lvl_font = pygame.font.Font('font/bell.ttf', 27)
+        self.quote_font = pygame.font.Font('font/simkai.ttf', 16)
         self.quote_position = (current_map.map_width + 50, 280)
         self.side_menu_height = current_map.map_height
-        self.side_menu_background = pygame.image.load("menu_bg.bmp").convert()
-        self.side_menu_font = pygame.font.Font('shuti.ttf', 18)
-        self.switch_turn_font = pygame.font.Font('simkai.ttf', 50)
-        self.in_game_menu_font = pygame.font.Font('simkai.ttf', 15)
+        self.side_menu_background = pygame.image.load("image/gui/menu_bg.bmp").convert()
+        self.side_menu_font = pygame.font.Font('font/shuti.ttf', 18)
+        self.switch_turn_font = pygame.font.Font('font/simkai.ttf', 50)
+        self.in_game_menu_font = pygame.font.Font('font/simkai.ttf', 15)
 
         self.side_menu_attribute_health_postion = (current_map.map_width + 30, 400)
 
 
-        self.attribute_health_icon = self.get_image_source("health.bmp" , (247,0,255))
-        self.attribute_attack_icon = self.get_image_source("attack.bmp", (247, 0, 255))
-        self.attribute_defence_icon = self.get_image_source("defence.bmp", (247, 0, 255))
-        self.attribute_speed_icon = self.get_image_source("speed.bmp", (247, 0, 255))
-        self.attribute_strategy_icon = self.get_image_source("strategy.bmp", (247, 0, 255))
-        self.attribute_skill_icon = self.get_image_source("skill.bmp", (247, 0, 255))
+        self.attribute_health_icon = self.get_image_source("image/gui/health.bmp" , (247,0,255))
+        self.attribute_attack_icon = self.get_image_source("image/gui/attack.bmp", (247, 0, 255))
+        self.attribute_defence_icon = self.get_image_source("image/gui/defence.bmp", (247, 0, 255))
+        self.attribute_speed_icon = self.get_image_source("image/gui/speed.bmp", (247, 0, 255))
+        self.attribute_strategy_icon = self.get_image_source("image/gui/strategy.bmp", (247, 0, 255))
+        self.attribute_skill_icon = self.get_image_source("image/gui/skill.bmp", (247, 0, 255))
 
         self.attributes_icon_set = {ATTRIBUTE_HEALTH: self.attribute_health_icon,
                                     ATTRIBUTE_ATTACK: self.attribute_attack_icon,
@@ -139,8 +139,8 @@ class Gui:
                                     ATTRIBUTE_SKILL: (current_map.map_width + 50, 570)
         }
 
-        self.selection_frame = self.get_image_source("selection.bmp", (247, 0, 255))
-        self.attack_frame = self.get_image_source("attack_frame.bmp", (247, 0, 255))
+        self.selection_frame = self.get_image_source("image/gui/selection.bmp", (247, 0, 255))
+        self.attack_frame = self.get_image_source("image/gui/attack_frame.bmp", (247, 0, 255))
 
         self.current_map = current_map
         self.menu_items = []
@@ -359,6 +359,7 @@ class Gui:
         else:
             menu_items = []
             valid_target = logic_controller.get_valid_target(pawn_info)
+
             if valid_target and pawn_info.can_attack:
                 menu_items.append( (u'攻击' , logic.MENU_ORDER_ATTACK) )
             menu_items.append((u'待命' , logic.MENU_ORDER_STAND_BY))

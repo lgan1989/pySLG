@@ -1,5 +1,6 @@
 import pawn
 import battle_map
+from ai import *
 
 
 INT_MAX = 99999999999
@@ -61,6 +62,8 @@ class Logic:
             p.action_started = False
             p.turn_finished = False
             p.hero.skill_triggered = False
+            p.ai_status = AI_STATUS_IDLE
+            p.can_attack = True
             if p.team != self.turn_team:
                 p.action_turn = False
             else:
@@ -68,6 +71,7 @@ class Logic:
         fight_logic_controller.trigger_passive_skills_at_turn_start()
 
     def end_trun(self):
+
         self.turn_team = 1 - self.turn_team
         self.new_turn()
 
@@ -158,8 +162,11 @@ class Logic:
             mobility_requied = self.calculate_mobile_reduce(pawn_info.team)
             mobility_requied[start[0]][start[1]] = 1
             step_limit = (pawn_info.hero.speed * 10 + 100 ) * self.class_mobility[pawn_info.mobility] / 100
-            path = self.find_path(start , target  , pawn_info.position , mobility_requied ,step_limit)
-            pawn_info.action_queue += [ (pawn.ACTION_MOVE, movement) for movement in path ]
+
+            valid_move = self.get_valid_move(pawn_info)
+            if target in valid_move:
+                path = self.find_path(start , target  , pawn_info.position , mobility_requied ,step_limit)
+                pawn_info.action_queue += [ (pawn.ACTION_MOVE, movement) for movement in path ]
         elif type == TARGET_TYPE_ENEMY_PAWN:
 
             attacker = pawn_info
@@ -182,7 +189,7 @@ class Logic:
 
         damage -= damage_reduce
 
-        print 'damage:' , damage
+        #print 'damage:' , damage
 
         defender.hero.health_decrease = min(damage , defender.hero.current_health)
 

@@ -18,11 +18,11 @@ class Sound:
     def __init__(self):
         pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=128)
         self.sound_set = {}
-        sound_cache[SOUND_TYPE_ATTACK] = pygame.mixer.Sound('Se32.wav')
-        sound_cache[SOUND_TYPE_WALK] = pygame.mixer.Sound('Se23.wav')
-        sound_cache[SOUND_TYPE_WALK_MOUNT] = pygame.mixer.Sound('Se24.wav')
-        sound_cache[SOUND_TYPE_WALK_JUNGLE] = pygame.mixer.Sound('Se27.wav')
-        sound_cache[SOUND_TYPE_HIT] = pygame.mixer.Sound('Se35.wav')
-        sound_cache[SOUND_TYPE_RETREAT] = pygame.mixer.Sound('Se16.wav')
+        sound_cache[SOUND_TYPE_ATTACK] = pygame.mixer.Sound('sound/Se32.wav')
+        sound_cache[SOUND_TYPE_WALK] = pygame.mixer.Sound('sound/Se23.wav')
+        sound_cache[SOUND_TYPE_WALK_MOUNT] = pygame.mixer.Sound('sound/Se24.wav')
+        sound_cache[SOUND_TYPE_WALK_JUNGLE] = pygame.mixer.Sound('sound/Se27.wav')
+        sound_cache[SOUND_TYPE_HIT] = pygame.mixer.Sound('sound/Se35.wav')
+        sound_cache[SOUND_TYPE_RETREAT] = pygame.mixer.Sound('sound/Se16.wav')
 
 

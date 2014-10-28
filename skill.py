@@ -15,7 +15,7 @@ SKILL_ID_WARPATH = 3
 
 
 def load_skill_images():
-    skill_image[SKILL_IMAGE_TAUNT] = pygame.image.load("taunt.bmp").convert()
+    skill_image[SKILL_IMAGE_TAUNT] = pygame.image.load("image/skill/" + str(SKILL_ID_TAUNT) + ".bmp").convert()
     skill_image[SKILL_IMAGE_TAUNT].set_alpha(200)
     return
 
@@ -45,6 +45,9 @@ def move_after_fight(p , s):
     if p.turn_finished or p.move_after_fight != -1:
         p.can_attack = True
         p.move_after_fight = 1
+    if p.move_after_fight == -1 and not p.turn_finished:
+        p.move_after_fight = 1
+        p.can_attack = True
 
 
 def warpath(p, s):

@@ -267,7 +267,7 @@ class Sprite:
             if self.image_list[direction][self.render_idx] is not None:
                 render_image = self.image_list[direction][self.render_idx].copy()
                 if  finished:
-                    tmp = image.load("finished.bmp").convert()
+                    tmp = image.load("image/mask/finished.bmp").convert()
                     render_image.blit(tmp , (0,0) , None , BLEND_RGBA_MULT)
                 if special_render_item and 'mask' in special_render_item:
                     pixel_array = PixelArray(  map_image_cache[ special_render_item['mask'] ] )

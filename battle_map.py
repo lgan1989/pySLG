@@ -9,6 +9,7 @@ DEFAULT_MAP_HEIGHT = 720
 DEFAULT_MAP_TILE_WIDTH = 48
 DEFAULT_MAP_TILE_HEIGHT = 48
 DEFAULT_MAP_NAME = "map-1"
+DEFAULT_MAP_PATH = "map/"
 
 COLLISION_INFO_EMPTY = 0
 COLLISION_INFO_OCCUPIED = 1
@@ -64,7 +65,7 @@ class Map:
         self.map_collision_info = []
         self.tile_row_number = self.map_height / DEFAULT_MAP_TILE_HEIGHT
         self.tile_col_number = self.map_width / DEFAULT_MAP_TILE_WIDTH
-        self.map_image_file = image.load(name + ".bmp")
+        self.map_image_file = image.load(DEFAULT_MAP_PATH + name + "/" + name + ".bmp")
         self.load()
 
     def load(self):
@@ -72,7 +73,7 @@ class Map:
         self.map_terrain_info = [[-1 for i in range(self.tile_col_number)] for j in range(self.tile_row_number)]
         self.map_collision_info = [[0 for i in range(self.tile_col_number)] for j in range(self.tile_row_number)]
         self.map_block_info = [[0 for i in range(self.tile_col_number)] for j in range(self.tile_row_number)]
-        file = open(self.map_name + '.map', 'r')
+        file = open(DEFAULT_MAP_PATH + self.map_name + "/" + self.map_name + '.map', 'r')
 
 
         for r, row in enumerate(file):
@@ -92,14 +93,14 @@ class Map:
 
 
     def init_terrain_mask(self):
-        map_image_cache[TERRAIN_MASK_JUNGLE_HIGH_48] = image.load("jungle_high_48.bmp").convert_alpha()
+        map_image_cache[TERRAIN_MASK_JUNGLE_HIGH_48] = image.load("image/mask/jungle_high_48.bmp").convert_alpha()
         map_image_cache[TERRAIN_MASK_JUNGLE_HIGH_48].set_colorkey((247,0,255))
-        map_image_cache[TERRAIN_MASK_JUNGLE_HIGH_64] = image.load("jungle_high_64.bmp").convert_alpha()
+        map_image_cache[TERRAIN_MASK_JUNGLE_HIGH_64] = image.load("image/mask/jungle_high_64.bmp").convert_alpha()
         map_image_cache[TERRAIN_MASK_JUNGLE_HIGH_64].set_colorkey((247,0,255))
 
-        map_image_cache[TERRAIN_MASK_JUNGLE_LOW_48] = image.load("jungle_low_48.bmp").convert_alpha()
+        map_image_cache[TERRAIN_MASK_JUNGLE_LOW_48] = image.load("image/mask/jungle_low_48.bmp").convert_alpha()
         map_image_cache[TERRAIN_MASK_JUNGLE_LOW_48].set_colorkey((247,0,255))
-        map_image_cache[TERRAIN_MASK_JUNGLE_LOW_64] = image.load("jungle_low_64.bmp").convert_alpha()
+        map_image_cache[TERRAIN_MASK_JUNGLE_LOW_64] = image.load("image/mask/jungle_low_64.bmp").convert_alpha()
         map_image_cache[TERRAIN_MASK_JUNGLE_LOW_64].set_colorkey((247,0,255))
 
     def render(self):

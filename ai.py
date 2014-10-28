@@ -11,6 +11,10 @@ AI_ACTION_MOVE = 0
 AI_ACTION_ATTACK = 1
 AI_ACTION_STAND_BY = 2
 
+AI_STATUS_IDLE = 0
+AI_STATUS_MOVED = 1
+AI_STATUS_ATTACKED = 2
+
 class AI:
     def __init__(self , pawn_list ):
         self.level = 0
@@ -25,9 +29,11 @@ class AI:
 
 
 
-    def take_action(self):
+    def take_action(self , pawn_info = None ):
 
         for p in self.pawn_list:
+            if pawn_info is not None and pawn_info != p:
+                continue
             if not p.has_ai:
                 continue
             if p.turn_finished:
@@ -36,12 +42,18 @@ class AI:
             if attack_target:
                 p.next_move = [ (AI_ACTION_ATTACK , attack_target[0]) ]
             else:
-                closest_enermy = self.find_closest_enermy(p)
-                if closest_enermy:
+                if p.ai_status == AI_STATUS_IDLE:
+                    closest_enermy = self.find_closest_enermy(p)
+                    if closest_enermy:
 
-                    destination = self.move_forawrd_to( p , closest_enermy.position )
-                    p.next_move = [ (AI_ACTION_MOVE , destination) ]
-                    #print 'next move :' , p.next_move
+                        destination = self.move_forawrd_to( p , closest_enermy.position )
+                        p.next_move = [ (AI_ACTION_MOVE , destination) ]
+                        p.ai_status = AI_STATUS_MOVED
+                        #print  p.position ,  ' next move :' , p.next_move
+                    else:
+                        p.turn_finished = True
+                else:
+                    p.turn_finished = True
 
 
     def find_closest_enermy(self , pawn_info):
@@ -60,6 +72,8 @@ class AI:
         valid_move = logic_controller.get_valid_move( pawn_info )
         d = -1
         destination = None
+
+        #print valid_move
 
         for pos in valid_move:
             tmp = self.distance( pos , grid )

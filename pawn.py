@@ -32,6 +32,8 @@ ACTION_ATTACKED = 4
 ACTION_DYING = 5
 ACTION_PROCESSING = 6
 
+
+
 D = ((1, 0), (0, -1), (0, 1), (-1, 0))
 GET_D = {D[0]: DIRECTION_DOWN, D[1]: DIRECTION_LEFT, D[2]: DIRECTION_RIGHT, D[3]: DIRECTION_UP}
 
@@ -91,20 +93,21 @@ class Pawn:
 
         #for ai
         self.next_move = None
+        self.ai_status = 0
 
         self.load()
 
     def load(self):
         #assign resource id
         if self.face_resource_id not in face_image_cache:
-            face_image_cache[self.face_resource_id] = pygame.image.load("face/" + str(self.hero.image_id) + "_face.jpg")
+            face_image_cache[self.face_resource_id] = pygame.image.load("image/face/" + str(self.hero.image_id) + "_face.jpg")
 
         if self.move_resource_id not in sprite_image_cache:
-            sprite_image_cache[self.move_resource_id] = pygame.image.load("move/Unit_mov_" + str(self.hero.image_id) + "-1.bmp")
+            sprite_image_cache[self.move_resource_id] = pygame.image.load("image/move/Unit_mov_" + str(self.hero.image_id) + "-1.bmp")
         if self.attack_resource_id not in sprite_image_cache:
-            sprite_image_cache[self.attack_resource_id] = pygame.image.load("attack/Unit_atk_" + str(self.hero.image_id) + "-1.bmp")
+            sprite_image_cache[self.attack_resource_id] = pygame.image.load("image/attack/Unit_atk_" + str(self.hero.image_id) + "-1.bmp")
         if self.spec_resource_id not in sprite_image_cache:
-            sprite_image_cache[self.spec_resource_id] = pygame.image.load("spec/Unit_spc_" + str(self.hero.image_id) + "-1.bmp")
+            sprite_image_cache[self.spec_resource_id] = pygame.image.load("image/spec/Unit_spc_" + str(self.hero.image_id) + "-1.bmp")
 
 
         self.sprite_stand = sprite.Sprite( self.hero.cid , sprite_image_cache[self.move_resource_id].convert(), 11, 1, (247, 0, 255),
