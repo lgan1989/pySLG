@@ -5,11 +5,12 @@ from ai import *
 
 INT_MAX = 99999999999
 
-TARGET_TYPE_FRIEND_PAWN = 0
-TARGET_TYPE_ENEMY_PAWN = 1
-TARGET_TYPE_TILE = 2
-TARGET_TYPE_MENU_ITEM = 3
-TARGET_TYPE_INVALID = 4
+TARGET_TYPE_PLAYER_PAWN = 0
+TARGET_TYPE_FRIEND_PAWN = 1
+TARGET_TYPE_ENEMY_PAWN = 2
+TARGET_TYPE_TILE = 3
+TARGET_TYPE_MENU_ITEM = 4
+TARGET_TYPE_INVALID = 5
 
 MENU_ORDER_END_TURN = 0
 MENU_ORDER_ATTACK = 1
@@ -64,7 +65,7 @@ class Logic:
             p.hero.skill_triggered = False
             p.ai_status = AI_STATUS_IDLE
             p.can_attack = True
-            if p.team != self.turn_team:
+            if p.turn_team != self.turn_team:
                 p.action_turn = False
             else:
                 p.action_turn = True
@@ -72,7 +73,8 @@ class Logic:
 
     def end_trun(self):
 
-        self.turn_team = 1 - self.turn_team
+        self.turn_team = (self.turn_team + 1)
+        self.turn_team %= 3
         self.new_turn()
 
     def get_target_pawn(self, target):
@@ -92,13 +94,18 @@ class Logic:
     def get_target_type(self, team, target):
         for p in self.pawn_list:
             if p.position == target:
-                return TARGET_TYPE_FRIEND_PAWN if team == p.team else TARGET_TYPE_ENEMY_PAWN
+                if p.controllable:
+                    return TARGET_TYPE_PLAYER_PAWN
+                elif p.team == team:
+                    return TARGET_TYPE_FRIEND_PAWN
+                else:
+                    return TARGET_TYPE_ENEMY_PAWN
         return TARGET_TYPE_TILE
 
     def fight(self, attacker , defender):
 
         if self.diff_position(attacker.position , defender.position) in attacker.range:
-            if attacker.team == self.turn_team:
+            if attacker.turn_team == self.turn_team:
                 attacker.action_started = True
             diff = self.diff_position(attacker.position , defender.position)
             attacker.direction = self.get_face_direction(diff)
@@ -150,8 +157,9 @@ class Logic:
     def process_player_action(self , pawn_info, target):
         if pawn_info.turn_finished:
             return
-        if self.turn_team != pawn_info.team:
+        if self.turn_team != pawn_info.turn_team:
             return
+
 
         type = self.get_target_type(pawn_info.team , target)
         if type == TARGET_TYPE_TILE or target == pawn_info.position:

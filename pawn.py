@@ -41,7 +41,7 @@ class Pawn:
 
 
 
-    def __init__(self, spawn_position=(0, 0), direction=0 , arm_type=ARM_MELEE , mobile_type=MOBILE_WALK, hero=None , team = 0 , controllable=True, has_ai = False):
+    def __init__(self, spawn_position=(0, 0), direction=0 , arm_type=ARM_MELEE , mobile_type=MOBILE_WALK, hero=None , team = 0 , turn_team=0, controllable=True, has_ai = False):
         self.pawn_class = arm_type
         self.mobility = mobile_type
         self.direction = direction
@@ -76,6 +76,7 @@ class Pawn:
 
         #fight logic
         self.team = team
+        self.turn_team = turn_team
         self.controllable = controllable
         self.range = ATTACK_RANGE[self.pawn_class]
         self.action_turn = True
@@ -100,14 +101,14 @@ class Pawn:
     def load(self):
         #assign resource id
         if self.face_resource_id not in face_image_cache:
-            face_image_cache[self.face_resource_id] = pygame.image.load("image/face/" + str(self.hero.image_id) + "_face.jpg")
+            face_image_cache[self.face_resource_id] = pygame.image.load("image/face/" + str(self.hero.face_id) + ".jpg")
 
         if self.move_resource_id not in sprite_image_cache:
-            sprite_image_cache[self.move_resource_id] = pygame.image.load("image/move/Unit_mov_" + str(self.hero.image_id) + "-1.bmp")
+            sprite_image_cache[self.move_resource_id] = pygame.image.load("image/move/Unit_mov_" + str(self.hero.action_frame_id) + "-1.bmp")
         if self.attack_resource_id not in sprite_image_cache:
-            sprite_image_cache[self.attack_resource_id] = pygame.image.load("image/attack/Unit_atk_" + str(self.hero.image_id) + "-1.bmp")
+            sprite_image_cache[self.attack_resource_id] = pygame.image.load("image/attack/Unit_atk_" + str(self.hero.action_frame_id) + "-1.bmp")
         if self.spec_resource_id not in sprite_image_cache:
-            sprite_image_cache[self.spec_resource_id] = pygame.image.load("image/spec/Unit_spc_" + str(self.hero.image_id) + "-1.bmp")
+            sprite_image_cache[self.spec_resource_id] = pygame.image.load("image/spec/Unit_spc_" + str(self.hero.action_frame_id) + "-1.bmp")
 
 
         self.sprite_stand = sprite.Sprite( self.hero.cid , sprite_image_cache[self.move_resource_id].convert(), 11, 1, (247, 0, 255),

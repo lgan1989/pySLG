@@ -7,12 +7,12 @@ HERO_TYPE_STRENGTH = 0
 HERO_TYPE_AGILITY = 1
 HERO_TYPE_INTELLIGENCE = 2
 
-hero_pool = []
+hero_pool = {}
 
 class Hero:
 
 
-    def __init__(self, cid, name, type, health, strength, agility, intelligence, level , quote):
+    def __init__(self, cid, rid, fid,name, type, health, strength, agility, intelligence, level , quote ):
         self.cid = cid
         self.name = name
         self.type = type
@@ -22,7 +22,8 @@ class Hero:
         self.power[HERO_TYPE_STRENGTH] = strength
         self.power[HERO_TYPE_INTELLIGENCE] = intelligence
         self.skills = []
-        self.image_id = cid
+        self.face_id = fid
+        self.action_frame_id = rid
         self.level = level
         self.parent_pawn = None
         self.quote = quote
@@ -61,11 +62,11 @@ def initiate_hero_pool(db):
     hero_list = db.list_heros()
     for h in hero_list:
 
-        new_hero = Hero( h['_id'] , h['name'] , h['type'] , h['health'] , h['strength'] , h['agility'] , h['intelligence'] , h['level'] , h['quote'] )
+        new_hero = Hero( h['_id'] , h['render_id'] , h['face_id'], h['name'] , h['type'] , h['health'] , h['strength'] , h['agility'] , h['intelligence'] , h['level'] , h['quote'] )
         hero_skill_list = db.get_hero_skill_list( h['_id'] )
         for s in hero_skill_list:
             hero_skill = skill.Skill( s['_id'] , s['name'] ,  s['type'] , s['is_active'] , s['effect_range'] , s['trigger_function'])
             new_hero.skills.append( hero_skill )
-        hero_pool.append(new_hero)
+        hero_pool[ new_hero.cid ] = new_hero
 
 
