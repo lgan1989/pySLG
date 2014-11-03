@@ -32,7 +32,16 @@ class Database:
         self.add_hero(261, 16, 261, u'诸葛直', hero.HERO_TYPE_STRENGTH, 80, 70, 66, 75, 10, u'诸葛直')
         self.add_hero(262, 52, 262, u'阿美族蛮兵', hero.HERO_TYPE_STRENGTH, 60, 60, 60, 60, 8,u'阿美族蛮兵')
         self.add_hero(263, 52, 262, u'达悟族蛮兵', hero.HERO_TYPE_STRENGTH, 60, 60, 60, 60, 8,u'达悟族蛮兵')
-        self.add_hero(280, 4, 263, u'吴国步兵', hero.HERO_TYPE_STRENGTH, 60, 60, 60, 60, 8,u'吴国步兵')
+        self.add_hero(264, 52, 262, u'泰雅族蛮兵', hero.HERO_TYPE_STRENGTH, 60, 60, 60, 60, 8,u'泰雅族蛮兵')
+        self.add_hero(265, 52, 262, u'排湾族蛮兵', hero.HERO_TYPE_STRENGTH, 60, 60, 60, 60, 8,u'排湾族蛮兵')
+        self.add_hero(266, 52, 262, u'赛夏族蛮兵', hero.HERO_TYPE_STRENGTH, 60, 60, 60, 60, 8,u'赛夏族蛮兵')
+        self.add_hero(267, 52, 262, u'邹族蛮兵', hero.HERO_TYPE_STRENGTH, 60, 60, 60, 60, 8,u'邹族蛮兵')
+        self.add_hero(268, 52, 262, u'布农族蛮兵', hero.HERO_TYPE_AGILITY, 60, 60, 60, 60, 8,u'布农族蛮兵')
+        self.add_hero(269, 52, 262, u'卑南族蛮兵', hero.HERO_TYPE_AGILITY, 60, 60, 60, 60, 8,u'卑南族蛮兵')
+        self.add_hero(270, 52, 262, u'鲁凯族蛮兵', hero.HERO_TYPE_AGILITY, 60, 60, 60, 60, 8,u'鲁凯族蛮兵')
+        self.add_hero(280, 4, 265, u'吴国步兵', hero.HERO_TYPE_STRENGTH, 60, 60, 60, 60, 8,u'吴国步兵')
+        self.add_hero(281, 25, 264, u'吴国弓兵', hero.HERO_TYPE_AGILITY, 60, 60, 60, 60, 8,u'吴国弓兵')
+
 
         self.add_skill(1, u'嘲讽', skill.SKILL_TYPE_NON_DAMAGE, False, ((0, 1), (0, -1), (-1, 0), (1, 0)), 'taunt')
         self.add_skill(2, u'迅捷', skill.SKILL_TYPE_NON_DAMAGE, False, (), 'move_after_fight')
@@ -41,6 +50,10 @@ class Database:
         self.add_hero_skill(135, 1)
         self.add_hero_skill(128, 2)
         self.add_hero_skill(135, 3)
+
+        self.add_hero_skill(260 , 1)
+        self.add_hero_skill(260 , 3)
+        self.add_hero_skill(261 , 2)
 
     def initiate_database(self):
 

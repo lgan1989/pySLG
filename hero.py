@@ -31,9 +31,11 @@ class Hero:
 
 
     def init_attributes(self):
+
         strength = self.power[HERO_TYPE_STRENGTH]
         agility = self.power[HERO_TYPE_AGILITY]
         intelligence = self.power[HERO_TYPE_INTELLIGENCE]
+
         self.weak = 0
         self.alive = 1
         self.max_health = self.health + int(strength * 1.5)

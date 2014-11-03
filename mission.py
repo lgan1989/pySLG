@@ -39,23 +39,32 @@ test_mission = Mission(1, u'卫温求夷洲'
 
 test_mission.set_player_roster(
     [
-        (260, (3, 3) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_WALK , 0 , True , False),
-        (261, (3, 4) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_MOUNT , 0 , True , False)
+        (260, (4, 4) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_WALK , 0 , True , False),
+        (261, (4, 6) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_MOUNT , 0 , True , False)
     ]
 )
 
 
 test_mission.set_enemy_roster(
     [
-        (262, (8, 3) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True),
-        (263, (8, 4) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True)
+        (262, (8, 6) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True , {'by' : [260,261] , 'dead_required':[264] , 'alive_required':[263]} , (0,1)),
+        (263, (8, 5) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True ,{'by' : [260,261] , 'dead_required':[264] , 'alive_required':[262]},(0,0)),
+        (264, (8, 4) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None ,(0,0)),
+        (265, (9, 6) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(1,1)),
+        (266, (9, 5) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(1,0)),
+        (267, (9, 4) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(1,0)),
+        (268, (10, 6) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(2,1)),
+        (269, (10, 5) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(2,0)),
+        (270, (10, 4) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(2,0))
     ]
 )
 
 
 test_mission.set_friend_roster(
     [
-        (280, (2, 3) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_WALK , 0 , False , True),
-        (280, (2, 4) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_WALK , 0 , False , True)
+        (280, (3, 3) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_WALK , 0 , False , True,None,(3,1)),
+        (280, (3, 7) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_WALK , 0 , False , True,None,(4,1)),
+        (281, (3, 4) , pawn.DIRECTION_DOWN, pawn.ARM_RANGE, pawn.MOBILE_WALK , 0 , False , True,None,(3,0)),
+        (281, (3, 6) , pawn.DIRECTION_DOWN, pawn.ARM_RANGE, pawn.MOBILE_WALK , 0 , False , True,None,(4,0))
     ]
 )

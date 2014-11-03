@@ -334,19 +334,24 @@ class Gui:
     def switch_turn(self, turn_team):
         rect = pygame.Surface((self.current_map.map_width, self.current_map.map_height))
         rect.set_alpha(150)
-        if turn_team == 1:
+        if turn_team == 2:
             rect.fill((255,0,0))
-        else:
+        elif turn_team == 0:
+            rect.fill((255,100,0))
+        elif turn_team == 1:
             rect.fill((0,0,255))
         self.turn_switch_wait += config.clock
         if self.turn_switch_wait > 1000:
             self.turn_switch_wait = 0
             return True
         render_queue.append((-2 , rect , (0,0)))
-        if turn_team == 1:
-            text = self.switch_turn_font.render(u'我方回合', 1, (250, 250, 250))
-        else:
-            text = self.switch_turn_font.render(u'敌方回合', 1, (250, 250, 250))
+
+        if turn_team == 2:
+            text = self.switch_turn_font.render(u'我军回合', 1, (250, 250, 250))
+        elif turn_team == 0:
+            text = self.switch_turn_font.render(u'友军回合', 1, (250, 250, 250))
+        elif turn_team == 1:
+            text = self.switch_turn_font.render(u'敌军回合', 1, (250, 250, 250))
         render_queue.append((-3 , text , (self.current_map.map_width/2 - text.get_width()/2 , self.current_map.map_height/2 - text.get_height())))
         return False
 
@@ -360,8 +365,13 @@ class Gui:
             menu_items = []
             valid_target = logic_controller.get_valid_target(pawn_info)
 
+            persuade_target = logic_controller.get_persuade_target(pawn_info)
+
+            if persuade_target and pawn_info.can_attack:
+                menu_items.append((u'劝降', logic.MENU_ORDER_PERSUADE) )
             if valid_target and pawn_info.can_attack:
                 menu_items.append( (u'攻击' , logic.MENU_ORDER_ATTACK) )
+
             menu_items.append((u'待命' , logic.MENU_ORDER_STAND_BY))
             size = (150 , len(menu_items) * 30)
             self.menu = Menu(self, pawn_info.render_position , size , menu_items)

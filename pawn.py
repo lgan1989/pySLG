@@ -16,6 +16,8 @@ ATTACK_RANGE = {}
 ATTACK_RANGE[ARM_MELEE] = ((0,1),(0,-1),(-1,0),(1,0),(1,1) ,(1,-1),(-1,1),(-1,-1))
 ATTACK_RANGE[ARM_RANGE] = ((1,1),(-1,-1),(1,-1),(-1,1),(2,0),(0,2),(-2,0),(0,-2))
 
+PERSUADE_RANGE = ( (0,1),(0,-1),(1,0) ,(-1,0) )
+
 MOBILE_WALK = 0
 MOBILE_MOUNT = 1
 
@@ -95,20 +97,33 @@ class Pawn:
         #for ai
         self.next_move = None
         self.ai_status = 0
+        self.is_leader = 0
+        self.ai_group = 0
+
+        #persuade
+        self.persuade = None
 
         self.load()
 
-    def load(self):
+    def load(self , reload=False):
         #assign resource id
-        if self.face_resource_id not in face_image_cache:
+
+        frame_id = self.hero.action_frame_id
+
+        if self.turn_team == 1 and self.hero.action_frame_id <= 100:
+            frame_id += 1
+        if self.turn_team == 2 and self.hero.action_frame_id <= 100:
+            frame_id += 2
+
+        if reload or self.face_resource_id not in face_image_cache:
             face_image_cache[self.face_resource_id] = pygame.image.load("image/face/" + str(self.hero.face_id) + ".jpg")
 
-        if self.move_resource_id not in sprite_image_cache:
-            sprite_image_cache[self.move_resource_id] = pygame.image.load("image/move/Unit_mov_" + str(self.hero.action_frame_id) + "-1.bmp")
-        if self.attack_resource_id not in sprite_image_cache:
-            sprite_image_cache[self.attack_resource_id] = pygame.image.load("image/attack/Unit_atk_" + str(self.hero.action_frame_id) + "-1.bmp")
-        if self.spec_resource_id not in sprite_image_cache:
-            sprite_image_cache[self.spec_resource_id] = pygame.image.load("image/spec/Unit_spc_" + str(self.hero.action_frame_id) + "-1.bmp")
+        if reload or self.move_resource_id not in sprite_image_cache:
+            sprite_image_cache[self.move_resource_id] = pygame.image.load("image/move/Unit_mov_" + str(frame_id) + "-1.bmp")
+        if reload or self.attack_resource_id not in sprite_image_cache:
+            sprite_image_cache[self.attack_resource_id] = pygame.image.load("image/attack/Unit_atk_" + str(frame_id) + "-1.bmp")
+        if reload or self.spec_resource_id not in sprite_image_cache:
+            sprite_image_cache[self.spec_resource_id] = pygame.image.load("image/spec/Unit_spc_" + str(frame_id) + "-1.bmp")
 
 
         self.sprite_stand = sprite.Sprite( self.hero.cid , sprite_image_cache[self.move_resource_id].convert(), 11, 1, (247, 0, 255),
@@ -256,6 +271,12 @@ class Pawn:
             return (position[1] * self.sprite_move.single_width - 8, position[0] * self.sprite_move.single_height - 8)
         else:
             return (position[1] * self.sprite_move.single_width , position[0] * self.sprite_move.single_height)
+
+    def reset_render_index(self):
+        self.sprite_stand.render_idx = 0
+        self.sprite_dying.render_idx = 0
+        self.sprite_stand.cycletime = 0
+        self.sprite_dying.cycletime = 0
 
     def render(self):
 

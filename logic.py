@@ -15,7 +15,8 @@ TARGET_TYPE_INVALID = 5
 MENU_ORDER_END_TURN = 0
 MENU_ORDER_ATTACK = 1
 MENU_ORDER_STAND_BY = 2
-MENU_ORDER_CANCEL = 3
+MENU_ORDER_PERSUADE = 3
+MENU_ORDER_CANCEL = 4
 
 DIRECTION_DOWN = 0
 DIRECTION_LEFT = 1
@@ -65,6 +66,7 @@ class Logic:
             p.hero.skill_triggered = False
             p.ai_status = AI_STATUS_IDLE
             p.can_attack = True
+            p.reset_render_index()
             if p.turn_team != self.turn_team:
                 p.action_turn = False
             else:
@@ -75,6 +77,7 @@ class Logic:
 
         self.turn_team = (self.turn_team + 1)
         self.turn_team %= 3
+
         self.new_turn()
 
     def get_target_pawn(self, target):
@@ -91,9 +94,17 @@ class Logic:
             return TARGET_TYPE_INVALID
         return self.get_target_type(pawn_info.team , target)
 
+
+    def get_target_team(self, target):
+        for p in self.pawn_list:
+            if p.position == target:
+                return p.team
+        return -1
+
     def get_target_type(self, team, target):
         for p in self.pawn_list:
             if p.position == target:
+
                 if p.controllable:
                     return TARGET_TYPE_PLAYER_PAWN
                 elif p.team == team:
@@ -154,14 +165,14 @@ class Logic:
                 self.pawn_list.remove(p)
 
 
-    def process_player_action(self , pawn_info, target):
+    def process_player_action(self , pawn_info, target , order=None):
         if pawn_info.turn_finished:
             return
         if self.turn_team != pawn_info.turn_team:
             return
 
-
         type = self.get_target_type(pawn_info.team , target)
+        team = self.get_target_team(target)
         if type == TARGET_TYPE_TILE or target == pawn_info.position:
             start = pawn_info.position
             if pawn_info.action_queue:
@@ -175,16 +186,21 @@ class Logic:
             if target in valid_move:
                 path = self.find_path(start , target  , pawn_info.position , mobility_requied ,step_limit)
                 pawn_info.action_queue += [ (pawn.ACTION_MOVE, movement) for movement in path ]
-        elif type == TARGET_TYPE_ENEMY_PAWN:
+        elif team != -1 and team !=  pawn_info.team:
 
-            attacker = pawn_info
-            defender = self.get_target_pawn(target)
+            if order == MENU_ORDER_ATTACK:
 
-            if attacker.taunted_to and defender in attacker.taunted_to:
-                self.fight(attacker , defender)
-            elif not attacker.taunted_to:
-                if defender.can_be_attacked:
+                attacker = pawn_info
+                defender = self.get_target_pawn(target)
+
+                if attacker.taunted_to and defender in attacker.taunted_to:
                     self.fight(attacker , defender)
+                elif not attacker.taunted_to:
+                    if defender.can_be_attacked:
+                        self.fight(attacker , defender)
+            elif order == MENU_ORDER_PERSUADE:
+                self.persuade_target(pawn_info , self.get_target_pawn(target))
+
 
     def process_attack_result(self , attacker , defender):
 
@@ -262,6 +278,39 @@ class Logic:
 
     def die(self, p):
         p.action_queue.append( (pawn.ACTION_DYING , p.position) )
+
+    def real_distance(self, start , destination , mobility_requied):
+
+        if start == destination:
+            return 0
+        que = []
+
+        visited = [[False for i in range(self.current_map.tile_col_number)] for j in
+                   range(self.current_map.tile_row_number)]
+
+        visited[start[0]][start[1]] = True
+        que.append((0,start))
+
+        while que:
+            top = que.pop(0)
+            step = top[0]
+            pos = top[1]
+            if pos == destination:
+                return step
+            for idx , d in enumerate(D):
+                nx = pos[0] + d[0]
+                ny = pos[1] + d[1]
+                if (nx , ny) == destination:
+                    return step + 1
+                if  0 <= nx < self.current_map.tile_row_number and 0 <= ny < self.current_map.tile_col_number and \
+                                visited[nx][ny] == False and  (
+                        ( (self.current_map.map_collision_info[nx][ny] == battle_map.COLLISION_INFO_EMPTY ) and (self.current_map.map_block_info[pos[0]][pos[1]] & (1<<idx) == 0) )):
+
+                    if mobility_requied[pos[0]][pos[1]] != INT_MAX:
+                        visited[nx][ny] = True
+                        que.append((step + 1 , (nx, ny)))
+
+        return INT_MAX
 
     def find_path(self, start, destination, self_position , mobility_requied , step_limit):
 
@@ -364,6 +413,52 @@ class Logic:
 
     def distance(self, pos1 , pos2):
         return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
+
+    def get_persuade_target(self , pawn_info):
+
+        ret = []
+
+        cid_list = []
+        for p in self.pawn_list:
+            cid_list.append(p.hero.cid)
+
+        for p in self.pawn_list:
+            if p.team != pawn_info.team and self.diff_position(pawn_info.position , p.position) in pawn.PERSUADE_RANGE:
+                if p.persuade and pawn_info.hero.cid in p.persuade['by']:
+                    ret.append( p.position )
+        return ret
+
+    def persuade_target(self , pawn_info , target_pawn):
+        succ = True
+
+        dead_required = target_pawn.persuade['dead_required']
+        alive_required = target_pawn.persuade['alive_required']
+
+        cid_list = []
+        for p in self.pawn_list:
+            cid_list.append(p.hero.cid)
+        for d in dead_required:
+            if d in cid_list:
+                succ = False
+                break
+        for d in alive_required:
+            if d not in cid_list:
+                succ = False
+                break
+
+        pawn_info.action_started = True
+        diff = self.diff_position(target_pawn.position , pawn_info.position)
+        pawn_info.direction = self.get_face_direction((-diff[0] , -diff[1]))
+        target_pawn.direction = self.get_face_direction(diff)
+        if succ:
+            target_pawn.turn_team = pawn_info.turn_team
+            target_pawn.team = pawn_info.team
+            target_pawn.has_ai = pawn_info.has_ai
+            target_pawn.controllable = pawn_info.controllable
+            target_pawn.turn_finished = True
+            target_pawn.load(True)
+        return succ
+
 
     def get_valid_target(self, pawn_info):
 
