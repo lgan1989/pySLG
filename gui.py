@@ -111,7 +111,7 @@ class Gui:
         self.quote_position = (current_map.map_width + 50, 280)
         self.side_menu_height = current_map.map_height
         self.side_menu_background = pygame.image.load("image/gui/menu_bg.bmp").convert()
-        self.side_menu_font = pygame.font.Font('font/shuti.ttf', 18)
+        self.side_menu_font = pygame.font.Font('font/simkai.ttf', 18)
         self.switch_turn_font = pygame.font.Font('font/simkai.ttf', 50)
         self.in_game_menu_font = pygame.font.Font('font/simkai.ttf', 15)
 
@@ -213,6 +213,8 @@ class Gui:
         grid = self.get_grid_on_mouse()
         if 0 <= grid[0] < self.main_window_row_number and 0 <= grid[1] < self.main_window_col_number:
             render_queue.append((-1, self.selection_frame, self.get_grid_render_position(grid)))
+            text = self.lvl_font.render( str(grid) , 1 , (0,0,0) )
+            render_queue.append((-1, text, self.get_grid_render_position(  (0,5)  )))
 
 
     def get_grid_on_mouse(self):
@@ -367,9 +369,9 @@ class Gui:
 
             persuade_target = logic_controller.get_persuade_target(pawn_info)
 
-            if persuade_target and pawn_info.can_attack:
+            if persuade_target and pawn_info.attack_count < pawn_info.attack_chance:
                 menu_items.append((u'劝降', logic.MENU_ORDER_PERSUADE) )
-            if valid_target and pawn_info.can_attack:
+            if valid_target and pawn_info.attack_count < pawn_info.attack_chance:
                 menu_items.append( (u'攻击' , logic.MENU_ORDER_ATTACK) )
 
             menu_items.append((u'待命' , logic.MENU_ORDER_STAND_BY))

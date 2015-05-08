@@ -1,9 +1,15 @@
+# -*- coding: utf-8 -*-
+
 import pawn
 import battle_map
+from config import env, logger, debug
 from ai import *
 
-
 INT_MAX = 99999999999
+
+TURN_TEAM_PLAYER = 0
+TURN_TEAM_FRIEND = 1
+TURN_TEAM_ENEMY = 2
 
 TARGET_TYPE_PLAYER_PAWN = 0
 TARGET_TYPE_FRIEND_PAWN = 1
@@ -33,12 +39,25 @@ fight_logic_controller = None
 
 class Logic:
 
+    current_map = None
+    class_mobility = None
+    pawn_list = None
+    turn_team = None
+    round_count = None
+    team_count = None
 
     def __init__(self, current_map, pawn_list):
+
         self.current_map = current_map
         self.class_mobility = {pawn.MOBILE_WALK: 5, pawn.MOBILE_MOUNT: 8}
         self.pawn_list = pawn_list
-        self.turn_team = 0
+        self.team_count = current_map.team_count
+        self.turn_team = TURN_TEAM_PLAYER
+        self.round_count = 1
+
+        if debug:
+            logger(u'Logic Module initialized');
+            logger(u'Current map: {0}'.format(current_map.map_name))
 
     def get_face_direction(self, diff):
 
@@ -60,23 +79,37 @@ class Logic:
         return ret
 
     def new_turn(self):
+        if debug:
+            logger(u'轮到队伍({0})行动...'.format(self.turn_team))
+        
         for p in self.pawn_list:
             p.action_started = False
             p.turn_finished = False
             p.hero.skill_triggered = False
             p.ai_status = AI_STATUS_IDLE
-            p.can_attack = True
+            p.attack_count = 0
+            p.move_count = 0
             p.reset_render_index()
+            p.taunted_to = []
+
             if p.turn_team != self.turn_team:
                 p.action_turn = False
             else:
                 p.action_turn = True
         fight_logic_controller.trigger_passive_skills_at_turn_start()
 
-    def end_trun(self):
+        
 
+    def end_turn(self):
+
+        if debug:
+            logger(u'队伍({0})行动结束'.format(self.turn_team));
         self.turn_team = (self.turn_team + 1)
-        self.turn_team %= 3
+
+        self.turn_team %= self.team_count
+
+        if self.turn_team == 0:
+            self.round_count += 1
 
         self.new_turn()
 
@@ -145,8 +178,6 @@ class Logic:
                 return
         for p in self.pawn_list:
             if p.hero.alive:
-                if p.move_after_fight == -1:
-                    p.can_attack = False
                 if p.hero.current_health <= 0:
                     p.hero.alive = 0
                 else:
@@ -154,13 +185,11 @@ class Logic:
                         p.hero.weak = 1
                     else:
                         p.hero.weak = 0
-                p.taunted_to = []
-                if p.action_started:
-                    if p.move_after_fight == 1:
-                        p.move_after_fight = -1
-                    if p.move_after_fight == 0:
-                        p.turn_finished = True
+                if p.move_count >= p.move_chance and \
+                    p.attack_count >= p.attack_chance:
+                    p.turn_finished = True
             else:
+                # [todo] wrap up clean up functions
                 self.current_map.map_collision_info[p.position[0]][p.position[1]] = battle_map.COLLISION_INFO_EMPTY
                 self.pawn_list.remove(p)
 
@@ -184,21 +213,26 @@ class Logic:
 
             valid_move = self.get_valid_move(pawn_info)
             if target in valid_move:
-                path = self.find_path(start , target  , pawn_info.position , mobility_requied ,step_limit)
-                pawn_info.action_queue += [ (pawn.ACTION_MOVE, movement) for movement in path ]
+                if pawn_info.move_count < pawn_info.move_chance or target == pawn_info.position:
+                    path = self.find_path(start , target  , pawn_info.position , mobility_requied ,step_limit)
+                    pawn_info.action_queue += [ (pawn.ACTION_MOVE, movement) for movement in path ]
         elif team != -1 and team !=  pawn_info.team:
 
+            pawn_info.move_count += 1
             if order == MENU_ORDER_ATTACK:
 
                 attacker = pawn_info
                 defender = self.get_target_pawn(target)
 
-                if attacker.taunted_to and defender in attacker.taunted_to:
-                    self.fight(attacker , defender)
-                elif not attacker.taunted_to:
-                    if defender.can_be_attacked:
+                if attacker.attack_count < attacker.attack_chance:
+                    attacker.attack_count += 1
+                    if attacker.taunted_to and defender in attacker.taunted_to:
                         self.fight(attacker , defender)
+                    elif not attacker.taunted_to:
+                        if defender.can_be_attacked:
+                            self.fight(attacker , defender)
             elif order == MENU_ORDER_PERSUADE:
+                attaker.attack_count += 1
                 self.persuade_target(pawn_info , self.get_target_pawn(target))
 
 
@@ -376,6 +410,10 @@ class Logic:
         return ret
 
     def get_valid_move(self, pawn_info):
+
+        if pawn_info.move_count >= pawn_info.move_chance:
+            return [pawn_info.position]
+
         mobility = (pawn_info.hero.speed  * 10 ) * self.class_mobility[pawn_info.mobility] / 100
 
         current_position = pawn_info.position
@@ -399,8 +437,9 @@ class Logic:
             for i in range(4):
                 nx = pos[0] + D[i][0]
                 ny = pos[1] + D[i][1]
-                if 0 <= nx < self.current_map.tile_row_number and 0 <= ny < self.current_map.tile_col_number and (
-                nx, ny) not in visited:
+                if 0 <= nx < self.current_map.tile_row_number and \
+                    0 <= ny < self.current_map.tile_col_number and \
+                    (nx, ny) not in visited:
                     if self.current_map.map_collision_info[nx][ny] == battle_map.COLLISION_INFO_EMPTY and  ((self.current_map.map_block_info[pos[0]][pos[1]] & (1<<i)) == 0):
                         if step + mobility_requied[pos[0]][pos[1]] <= mobility:
                             visited[(nx, ny)] = 1
@@ -416,6 +455,13 @@ class Logic:
 
     def get_persuade_target(self , pawn_info):
 
+        """
+        Return a list of position of pawn that can be persuaded by @pawn_info
+
+        @pawn_info:type pawn
+
+        """
+
         ret = []
 
         cid_list = []
@@ -429,6 +475,14 @@ class Logic:
         return ret
 
     def persuade_target(self , pawn_info , target_pawn):
+
+        """
+        Return true when @target_pawn can be persuaded by @pawn_info
+
+        @pawn_info:type pawn
+        @target_pawn:type pawn
+        """
+
         succ = True
 
         dead_required = target_pawn.persuade['dead_required']
@@ -461,11 +515,23 @@ class Logic:
 
 
     def get_valid_target(self, pawn_info):
+        """
+        Return a list of positions of pwan
+
+        @pawn_info:type pawn
+        
+        What is a valid target:
+        if current pawn is taunted: 
+            only those enemies who taunt and in range will be available.  
+        else:
+            other enemies that in range. 
+        """
 
         ret = []
         if pawn_info.taunted_to:
             for p in pawn_info.taunted_to:
-                ret.append(p.position)
+                if p.can_be_attacked and p.team != pawn_info.team and self.diff_position(pawn_info.position , p.position) in pawn_info.range:
+                    ret.append(p.position)
             return ret
         for p in self.pawn_list:
             if p.can_be_attacked and p.team != pawn_info.team and self.diff_position(pawn_info.position , p.position) in pawn_info.range:

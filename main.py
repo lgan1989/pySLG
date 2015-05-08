@@ -20,8 +20,6 @@ import mission
 import sys
 import copy
 
-sys.stdout = open("log.txt", "w")
-
 
 def main():
     #Initialize Everything
@@ -34,7 +32,7 @@ def main():
 
     hero.initiate_hero_pool(db)
 
-    current_map = Map(name='map-1')
+    current_map = Map(name='map-1',team_count=3)
     sprite.Sprite.current_map = current_map
     screen = pygame.display.set_mode((current_map.map_width + 256, current_map.map_height))
     current_map.init_terrain_mask()
@@ -61,17 +59,14 @@ def main():
         p = pawn.Pawn(roster[1], roster[2], roster[3], roster[4], hero.hero_pool[roster[0]], roster[5], 0, roster[6],
                       roster[7])
         pawn_list.append(p)
-
     for roster in current_mission.friend_roster:
         h = copy.copy(hero.hero_pool[roster[0]])
-
         p = pawn.Pawn(roster[1], roster[2], roster[3], roster[4], h, roster[5], 1, roster[6], roster[7])
         p.ai_group = roster[9][0]
         p.is_leader = roster[9][1]
         pawn_list.append(p)
     for roster in current_mission.enemy_roster:
         h = copy.copy(hero.hero_pool[roster[0]])
-
         p = pawn.Pawn(roster[1], roster[2], roster[3], roster[4], h, roster[5], 2, roster[6], roster[7])
         p.persuade = roster[8]
         p.ai_group = roster[9][0]
@@ -92,20 +87,24 @@ def main():
 
     ai.logic_controller = logic_controller
     gui.logic_controller = logic_controller
-    info_before_move = (None, None)
+    info_before_move = (None, None, None)
 
     ai_controller = ai.AI(pawn_list)
 
     logic_controller.new_turn()
-    while 1:
+
+    current_round = 1
+    last_turn_team = 0
+
+    while True:
 
         config.clock = pygame.time.Clock().tick(config.FPS)
 
         current_map.render()
 
         logic_controller.update_terrain_mask()
-        logic_controller.update_pawn_status()
         skill.fight_logic_controller.trigger_passive_skills_realtime()
+        logic_controller.update_pawn_status()
 
         for p in logic_controller.pawn_list:
             if p.hero.alive:
@@ -151,25 +150,25 @@ def main():
                                 #print p.hero.name.encode('utf-8'), ' not finished', p.next_move, 'control status: ', control.status , logic_controller.turn_team , p.turn_team
                             flag = True
                         else:
-
                             continue
                         break
                     elif control.status == control.CONTROL_STATUS_PAWN_MOVED:
                         control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
                     flag = True
-
             if not flag:
                 control.status = control.CONTROL_STATUS_TURN_FINISHING
 
             if control.status == control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION:
                 if not logic_controller.process_action_queue():
                     control.status = control.CONTROL_STATUS_IDlE
-
         else:
-
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_p:
+                        if debug and selected_pawn:
+                            logger(  selected_pawn.status_info() )
 
                 if control.status == control.CONTROL_STATUS_MENU_ATTACK_CHOOSE:
                     target = gui_controller.get_grid_on_mouse()
@@ -207,6 +206,7 @@ def main():
 
                     selected_pawn.position = info_before_move[0]
                     selected_pawn.direction = info_before_move[1]
+                    selected_pawn.move_count = info_before_move[2]
                     selected_pawn.render_position = selected_pawn.get_render_position(selected_pawn.position)
                     logic_controller.current_map.map_collision_info[selected_pawn.position[0]][
                         selected_pawn.position[1]] = battle_map.COLLISION_INFO_OCCUPIED
@@ -230,7 +230,7 @@ def main():
             elif control.status == control.CONTROL_STATUS_PAWN_SELECTED:
 
                 if selected_pawn:
-                    info_before_move = (selected_pawn.position, selected_pawn.direction)
+                    info_before_move = (selected_pawn.position, selected_pawn.direction , selected_pawn.move_count)
                     valid_move = logic_controller.get_valid_move(selected_pawn)
 
                     gui_controller.highlight_valid_move(valid_move, selected_pawn.controllable)
@@ -257,10 +257,9 @@ def main():
 
         if control.status == control.CONTROL_STATUS_TURN_FINISHING:
             if (gui_controller.switch_turn(logic_controller.turn_team)):
-                logic_controller.end_trun()
+                logic_controller.end_turn()
                 control.status = control.CONTROL_STATUS_IDlE
         else:
-
             control.process_event()
 
         if control.status not in (

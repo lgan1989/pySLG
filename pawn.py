@@ -41,9 +41,67 @@ GET_D = {D[0]: DIRECTION_DOWN, D[1]: DIRECTION_LEFT, D[2]: DIRECTION_RIGHT, D[3]
 
 class Pawn:
 
+    pawn_class = None
+    mobility = None
+    direction = None
+    action = None
+    position = None
+    render_position = None
+    attacking = None
+    parrying = None
+    attackeding = None
+    action_queue = None
+    sprite_stand = None
+    sprite_move = None
+    sprite_attack = None
+    sprite_parry = None
+    sprite_attacked = None
+    sprite_weak = None
+    sprite_dying = None
+    sprite_finished = None
+    special_render_item = None
+    move_resource_id = None
+    attack_resource_id = None
+    spec_resource_id = None
+    face_resource_id = None
+    map_tile = None
+    in_grid = None
+    hero = None
+    turn_finished = None
+    action_started = None
+    has_ai = None
+
+
+    #fight logic
+    team = None
+    turn_team = None
+    controllable = None
+    range = None
+    action_turn = None
+
+    #for skill taunt
+    taunted_to = None
+
+    #for skill move_after_fight
+    attack_chance = None
+    move_chance = None
+
+    can_be_attacked = None
+    can_be_targeted = None
+
+
+    #for ai
+    next_move = None
+    ai_status = None
+    is_leader = None
+    ai_group = None
+
+    #persuade
+    persuade = None
 
 
     def __init__(self, spawn_position=(0, 0), direction=0 , arm_type=ARM_MELEE , mobile_type=MOBILE_WALK, hero=None , team = 0 , turn_team=0, controllable=True, has_ai = False):
+
         self.pawn_class = arm_type
         self.mobility = mobile_type
         self.direction = direction
@@ -87,8 +145,10 @@ class Pawn:
         self.taunted_to = []
 
         #for skill move_after_fight
-        self.move_after_fight = 0
-        self.can_attack = True
+        self.move_chance = 1
+        self.move_count = 0
+        self.attack_chance = 1
+        self.attack_count = 0
 
         self.can_be_attacked = True
         self.can_be_targeted = True
@@ -305,3 +365,19 @@ class Pawn:
                 self.sprite_move.animate(self.direction , self.render_position , -1 , self.special_render_item , 1 , True)
 
         self.draw_pawn_health_bar()
+
+    def status_info(self):
+        """
+        Return a string represent information of current pawn.
+        """
+
+        ret = "================================================================\n"
+        ret += 'Selected pawn: ';
+        ret += u'Name: {0}'.format(self.hero.name) + '\n'
+        ret += u'Movement: {0}/{1}'.format(self.move_count, self.move_chance) + '\n'
+        ret += u'Attack: {0}/{1}'.format(self.attack_count, self.attack_chance) + '\n'
+        ret += u'Finished: {0}'.format(self.turn_finished) + '\n'
+        ret += "================================================================\n"
+
+        return ret
+

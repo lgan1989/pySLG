@@ -4,6 +4,9 @@ import pygame
 SKILL_TYPE_DAMAGE = 0
 SKILL_TYPE_NON_DAMAGE = 1
 
+PASSIVE_TYPE_REALTIME = 0
+PASSIVE_TYPE_TURN_START = 1
+
 SKILL_IMAGE_TAUNT = 0
 
 fight_logic_controller = None
@@ -20,14 +23,24 @@ def load_skill_images():
     return
 
 class Skill:
+    sid = None
+    name = None
+    type = None
+    is_active = None
+    passive_type = None
+    trigger_function = None
+    effect_range = None
 
-    def __init__(self , sid, name , type , is_active , effect_range, trigger_function ):
+    def __init__(self , sid, name , type , is_active , passive_type, effect_range, trigger_function ):
         self.sid = sid
         self.name = name
         self.type = type
         self.is_active = is_active
+        self.passive_type = passive_type
         self.trigger_function = trigger_function
         self.effect_range = effect_range
+
+#p for pawn, s for skill
 
 def taunt(p, s):
     p.taunt = True
@@ -42,13 +55,7 @@ def taunt(p, s):
 
 
 def move_after_fight(p , s):
-    if p.turn_finished or p.move_after_fight != -1:
-        p.can_attack = True
-        p.move_after_fight = 1
-    if p.move_after_fight == -1 and not p.turn_finished:
-        p.move_after_fight = 1
-        p.can_attack = True
-
+    p.move_chance = 2
 
 def warpath(p, s):
     pos = p.position

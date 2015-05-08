@@ -10,6 +10,7 @@ DEFAULT_MAP_TILE_WIDTH = 48
 DEFAULT_MAP_TILE_HEIGHT = 48
 DEFAULT_MAP_NAME = "map-1"
 DEFAULT_MAP_PATH = "map/"
+DEFAULT_TEAM_COUNT = 2
 
 COLLISION_INFO_EMPTY = 0
 COLLISION_INFO_OCCUPIED = 1
@@ -57,10 +58,11 @@ def get_mask(terrain , action):
 class Map:
 
 
-    def __init__(self, width=DEFAULT_MAP_WIDTH, height=DEFAULT_MAP_HEIGHT, name=DEFAULT_MAP_NAME):
+    def __init__(self, width=DEFAULT_MAP_WIDTH, height=DEFAULT_MAP_HEIGHT, name=DEFAULT_MAP_NAME, team_count = DEFAULT_TEAM_COUNT):
         self.map_width = width
         self.map_height = height
         self.map_name = name
+        self.team_count = team_count
         self.map_terrain_info = []
         self.map_collision_info = []
         self.tile_row_number = self.map_height / DEFAULT_MAP_TILE_HEIGHT

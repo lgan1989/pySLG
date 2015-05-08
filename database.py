@@ -19,6 +19,9 @@ class Database:
         self.collection_hero_skill = self.db.collection_hero_skill
 
         if not config.db_initiated:
+            self.collection_hero.remove({})
+            self.collection_skill.remove({})
+            self.collection_hero_skill.remove({})
             self.populate_database()
 
 
@@ -43,9 +46,9 @@ class Database:
         self.add_hero(281, 25, 264, u'吴国弓兵', hero.HERO_TYPE_AGILITY, 60, 60, 60, 60, 8,u'吴国弓兵')
 
 
-        self.add_skill(1, u'嘲讽', skill.SKILL_TYPE_NON_DAMAGE, False, ((0, 1), (0, -1), (-1, 0), (1, 0)), 'taunt')
-        self.add_skill(2, u'迅捷', skill.SKILL_TYPE_NON_DAMAGE, False, (), 'move_after_fight')
-        self.add_skill(3, u'战意', skill.SKILL_TYPE_NON_DAMAGE, False, ((0, 1), (0, -1), (-1, 0), (1, 0)), 'warpath')
+        self.add_skill(1, u'嘲讽', skill.SKILL_TYPE_NON_DAMAGE, False, skill.PASSIVE_TYPE_REALTIME , ((0, 1), (0, -1), (-1, 0), (1, 0)), 'taunt')
+        self.add_skill(2, u'迅捷', skill.SKILL_TYPE_NON_DAMAGE, False, skill.PASSIVE_TYPE_TURN_START, (), 'move_after_fight')
+        self.add_skill(3, u'战意', skill.SKILL_TYPE_NON_DAMAGE, False, skill.PASSIVE_TYPE_REALTIME, ((0, 1), (0, -1), (-1, 0), (1, 0)), 'warpath')
 
         self.add_hero_skill(135, 1)
         self.add_hero_skill(128, 2)
@@ -82,13 +85,14 @@ class Database:
         }
         self.collection_hero.insert(hero)
 
-    def add_skill(self, sid=0, name='', type=0, is_active=False, effect_range=(), trigger_function=''):
+    def add_skill(self, sid=0, name='', type=0, is_active=False, passive_type = 0 , effect_range=(), trigger_function=''):
 
         skill = {
             "_id": sid,
             "name": name,
             "type": type,
             "is_active": is_active,
+            "passive_type" : passive_type,
             "effect_range": effect_range,
             "trigger_function": trigger_function
         }
