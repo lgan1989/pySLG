@@ -41,6 +41,7 @@ GET_D = {D[0]: DIRECTION_DOWN, D[1]: DIRECTION_LEFT, D[2]: DIRECTION_RIGHT, D[3]
 
 class Pawn:
 
+    index = 0
     pawn_class = None
     mobility = None
     direction = None
@@ -102,6 +103,8 @@ class Pawn:
 
     def __init__(self, spawn_position=(0, 0), direction=0 , arm_type=ARM_MELEE , mobile_type=MOBILE_WALK, hero=None , team = 0 , turn_team=0, controllable=True, has_ai = False):
 
+        self.index = Pawn.index
+        Pawn.index += 1
         self.pawn_class = arm_type
         self.mobility = mobile_type
         self.direction = direction
@@ -159,6 +162,7 @@ class Pawn:
         self.ai_status = 0
         self.is_leader = 0
         self.ai_group = 0
+        self.ai_strategy = 0
 
         #persuade
         self.persuade = None

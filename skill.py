@@ -67,7 +67,6 @@ def warpath(p, s):
         if target_pawn is not None and target_pawn.team != p.team:
             c += 1
 
-    c = max(0 , c - 1)
     p.hero.attack_buff = int( p.hero.attack * 0.1 * c )
     p.hero.defence_buff = int( p.hero.attack * 0.2 * c )
 

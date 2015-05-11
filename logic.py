@@ -235,21 +235,29 @@ class Logic:
                 attaker.attack_count += 1
                 self.persuade_target(pawn_info , self.get_target_pawn(target))
 
-
-    def process_attack_result(self , attacker , defender):
-
+    def calculate_damage(self,  attacker, defender):
         attack_value = attacker.hero.attack + attacker.hero.attack_buff
         defence_value = defender.hero.defence + defender.hero.defence_buff
         reduce_percent = (defender.hero.strategy + defender.hero.strength_buff) * 1.0 / 100
+
+        succ_ratio = (attacker.hero.agility + attacker.hero.agility) * 1.0 / (defender.hero.agility + defender.hero.agiligy_buff)
+        succ_ratio = max(1 , succ_ratio)
 
         damage = attack_value
         damage_reduce = int(defence_value * reduce_percent)
 
         damage -= damage_reduce
+        damage = max(0 , damage)
+        return damage , succ_ratio
 
-        #print 'damage:' , damage
+    def process_attack_result(self , attacker , defender):
+
+        damage , succ_ratio = self.calculate_damage(attacker,defender)
 
         defender.hero.health_decrease = min(damage , defender.hero.current_health)
+
+        if debug:
+            logger(  u'{0} attacked {1} , with {2} damage, {1}\'s hp reduced from {3} to {4}'.format( attacker.hero.name , defender.hero.name , damage , defender.hero.current_health , defender.hero.current_health - defender.hero.health_decrease ) )
 
         defender.action = pawn.ACTION_PROCESSING
 
@@ -325,6 +333,7 @@ class Logic:
         visited[start[0]][start[1]] = True
         que.append((0,start))
 
+
         while que:
             top = que.pop(0)
             step = top[0]
@@ -344,6 +353,7 @@ class Logic:
                         visited[nx][ny] = True
                         que.append((step + 1 , (nx, ny)))
 
+        
         return INT_MAX
 
     def find_path(self, start, destination, self_position , mobility_requied , step_limit):
@@ -446,6 +456,11 @@ class Logic:
                             q.append((step + mobility_requied[pos[0]][pos[1]], (nx, ny)))
 
         return ret
+
+    def targfet_can_be_attacked_by_pawn_from(self , target_position, pawn_info, position):
+
+        return self.diff_position( position, target_position ) in pawn_info.range
+
 
     def diff_position(self , source_position , target_positin):
         return (target_positin[0] - source_position[0] , target_positin[1]  - source_position[1])

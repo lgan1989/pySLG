@@ -36,24 +36,24 @@ class Hero:
         self.level = level
         self.parent_pawn = None
         self.quote = quote
+        self.strength = self.power[HERO_TYPE_STRENGTH]
+        self.agility = self.power[HERO_TYPE_AGILITY]
+        self.intelligence = self.power[HERO_TYPE_INTELLIGENCE]
         self.init_attributes()
 
 
     def init_attributes(self):
 
-        strength = self.power[HERO_TYPE_STRENGTH]
-        agility = self.power[HERO_TYPE_AGILITY]
-        intelligence = self.power[HERO_TYPE_INTELLIGENCE]
 
         self.weak = 0
         self.alive = 1
-        self.max_health = self.health + int(strength * 1.5)
+        self.max_health = self.health + int(self.strength * 1.5)
         self.current_health = self.max_health
         self.health_decrease = 0
         self.attack = self.power[self.type]
-        self.defence = int ( (strength) * 0.7 + (agility) * 0.3 )
-        self.speed = int(agility * 15 / 100)
-        self.strategy = int(intelligence * self.speed/15)
+        self.defence = int ( (self.strength) * 0.7 + (self.agility) * 0.3 )
+        self.speed = int(self.agility * 15 / 100)
+        self.strategy = int(self.intelligence * self.speed/15)
 
         self.strength_buff = 0
         self.agiligy_buff = 0

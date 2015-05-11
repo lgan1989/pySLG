@@ -64,6 +64,7 @@ def main():
         p = pawn.Pawn(roster[1], roster[2], roster[3], roster[4], h, roster[5], 1, roster[6], roster[7])
         p.ai_group = roster[9][0]
         p.is_leader = roster[9][1]
+        p.ai_strategy = roster[10]
         pawn_list.append(p)
     for roster in current_mission.enemy_roster:
         h = copy.copy(hero.hero_pool[roster[0]])
@@ -71,6 +72,7 @@ def main():
         p.persuade = roster[8]
         p.ai_group = roster[9][0]
         p.is_leader = roster[9][1]
+        p.ai_strategy = roster[10]
         pawn_list.append(p)
 
     selected_pawn = None
@@ -125,32 +127,19 @@ def main():
                     continue
                 if not p.turn_finished and p.has_ai:
                     if control.status == control.CONTROL_STATUS_IDlE:
-
-                        #wait for leader to take action first
-                        ready = False
-                        if p.is_leader:
-                            ready = True
-                        else:
-                            for ld in ai_controller.pawn_list:
-                                if ld.ai_group == p.ai_group and ld.is_leader and ld.turn_finished == True :
-                                    ready = True
-                        if ready:
-                            ai_controller.take_action(p)
-
-                            if p and p.next_move:
-                                top = p.next_move[0]
-                                action_type = top[0]
-                                action_target = top[1]
-                                if action_type == ai.AI_ACTION_MOVE:
-                                    logic_controller.process_player_action(p, action_target)
-                                    control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
-                                elif action_type == ai.AI_ACTION_ATTACK:
-                                    logic_controller.process_player_action(p, action_target , MENU_ORDER_ATTACK)
-                                    control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
-                                #print p.hero.name.encode('utf-8'), ' not finished', p.next_move, 'control status: ', control.status , logic_controller.turn_team , p.turn_team
-                            flag = True
-                        else:
-                            continue
+                        ai_controller.take_action(p)
+                        if p and p.next_move:
+                            top = p.next_move[0]
+                            action_type = top[0]
+                            action_target = top[1]
+                            if action_type == ai.AI_ACTION_MOVE:
+                                logic_controller.process_player_action(p, action_target)
+                                control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
+                            elif action_type == ai.AI_ACTION_ATTACK:
+                                logic_controller.process_player_action(p, action_target , MENU_ORDER_ATTACK)
+                                control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
+                            #print p.hero.name.encode('utf-8'), ' not finished', p.next_move, 'control status: ', control.status , logic_controller.turn_team , p.turn_team
+                        flag = True
                         break
                     elif control.status == control.CONTROL_STATUS_PAWN_MOVED:
                         control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
