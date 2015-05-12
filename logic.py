@@ -283,7 +283,7 @@ class Logic:
                     p.move_to_grid(action_grid)
                     if p.position == action_grid:
                         p.action_queue.pop(0)
-                        if not p.action_queue or p.action_queue[0][0] != pawn.ACTION_MOVE:
+                        if not p.action_queue or (p.action_queue[0][0] != pawn.ACTION_MOVE):
                             p.sprite_move.finish()
                             p.action = pawn.ACTION_STAND
                             control.status = control.CONTROL_STATUS_PAWN_MOVED
@@ -400,6 +400,12 @@ class Logic:
                 path.append(cur)
                 cur = prev[cur[0]][cur[1]]
         return path[::-1]
+
+    def put_pawn_to_position(self, pawn_info, position):
+        self.current_map.map_collision_info[pawn_info.position[0]][pawn_info.position[1]] = battle_map.COLLISION_INFO_EMPTY
+        self.current_map.map_collision_info[position[0]][position[1]] = battle_map.COLLISION_INFO_OCCUPIED
+        pawn_info.position = ( position[0] , position[1] )
+
 
     def calculate_mobile_reduce(self, team):
 
@@ -562,4 +568,17 @@ class Logic:
 
         return
 
+    def target_info(self , pawn_info):
+        """
+        Return a string represent information of the target of current pawn.
+        """
+
+        ret = "=====================================================================\n"
+        target_list = self.get_valid_target(pawn_info)
+        for target in target_list:
+            target = self.get_target_pawn(target)
+            ret += u'Name {0}'.format(target.hero.name) + '\n'
+            ret += u'Position {0}'.format(target.position) + '\n'
+        ret += "======================================================================\n"
+        return ret
 

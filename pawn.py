@@ -376,7 +376,7 @@ class Pawn:
         """
 
         ret = "================================================================\n"
-        ret += 'Selected pawn: ';
+        ret += 'Selected pawn: '
         ret += u'Name: {0}'.format(self.hero.name) + '\n'
         ret += u'Movement: {0}/{1}'.format(self.move_count, self.move_chance) + '\n'
         ret += u'Attack: {0}/{1}'.format(self.attack_count, self.attack_chance) + '\n'

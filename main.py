@@ -115,42 +115,32 @@ def main():
                 pawn_list.remove(p)
 
 
-        #FOR ENEMY AI
+        #AI Processing
         if logic_controller.turn_team != 0:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return
 
             flag = False
-            for p in ai_controller.pawn_list:
-                if p.turn_team != logic_controller.turn_team:
-                    continue
-                if not p.turn_finished and p.has_ai:
-                    if control.status == control.CONTROL_STATUS_IDlE:
-                        ai_controller.take_action(p)
-                        if p and p.next_move:
-                            top = p.next_move[0]
-                            action_type = top[0]
-                            action_target = top[1]
-                            if action_type == ai.AI_ACTION_MOVE:
-                                logic_controller.process_player_action(p, action_target)
-                                control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
-                            elif action_type == ai.AI_ACTION_ATTACK:
-                                logic_controller.process_player_action(p, action_target , MENU_ORDER_ATTACK)
-                                control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
-                            #print p.hero.name.encode('utf-8'), ' not finished', p.next_move, 'control status: ', control.status , logic_controller.turn_team , p.turn_team
-                        flag = True
-                        break
-                    elif control.status == control.CONTROL_STATUS_PAWN_MOVED:
-                        control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
+
+            if control.status == control.CONTROL_STATUS_IDlE:
+                ai_action = ai_controller.get_next_ai() 
+                if ai_action != None:
                     flag = True
+                    ai_controller.take_action( ai_action )
+                    control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
+            elif control.status != control.CONTROL_STATUS_TURN_FINISHING:
+                control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION 
+                flag = True
+            
             if not flag:
                 control.status = control.CONTROL_STATUS_TURN_FINISHING
-
+                
             if control.status == control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION:
                 if not logic_controller.process_action_queue():
                     control.status = control.CONTROL_STATUS_IDlE
         else:
+
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return
@@ -158,6 +148,7 @@ def main():
                     if event.key == pygame.K_p:
                         if debug and selected_pawn:
                             logger(  selected_pawn.status_info() )
+                            logger( logic_controller.target_info(selected_pawn) )
 
                 if control.status == control.CONTROL_STATUS_MENU_ATTACK_CHOOSE:
                     target = gui_controller.get_grid_on_mouse()
