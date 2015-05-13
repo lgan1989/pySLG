@@ -45,27 +45,31 @@ test_mission.set_player_roster(
     ]
 )
 
-
 test_mission.set_enemy_roster(
     [
-        (262, (8, 6) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True , {'by' : [260,261] , 'dead_required':[264] , 'alive_required':[263]} , (0,1) , ai.AI_STRATEGY_OFFENCE),
-        (263, (8, 5) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True ,{'by' : [260,261] , 'dead_required':[264] , 'alive_required':[262]},(0,0),ai.AI_STRATEGY_OFFENCE),
-        (264, (8, 4) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None ,(0,0),ai.AI_STRATEGY_OFFENCE),
-        (265, (9, 6) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(1,1),ai.AI_STRATEGY_OFFENCE),
-        (266, (9, 5) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(1,0),ai.AI_STRATEGY_OFFENCE),
-        (267, (9, 4) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(1,0),ai.AI_STRATEGY_OFFENCE),
-        (268, (10, 6) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(2,1),ai.AI_STRATEGY_OFFENCE),
-        (269, (10, 5) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(2,0),ai.AI_STRATEGY_OFFENCE),
-        (270, (10, 4) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(2,0),ai.AI_STRATEGY_OFFENCE)
+        (262, (8, 6) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True , {'by' : [260,261] , 'dead_required':[264] , 'alive_required':[263]} , (0,1) , ai.AI_STRATEGY_OFFENSIVE),
+        (263, (8, 5) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True ,{'by' : [260,261] , 'dead_required':[264] , 'alive_required':[262]},(0,0),ai.AI_STRATEGY_OFFENSIVE),
+        (264, (8, 4) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None ,(0,0),ai.AI_STRATEGY_OFFENSIVE),
+        (265, (9, 6) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(1,1),ai.AI_STRATEGY_OFFENSIVE),
+        (266, (9, 5) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(1,0),ai.AI_STRATEGY_OFFENSIVE),
+        (267, (9, 4) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(1,0),ai.AI_STRATEGY_OFFENSIVE),
+        (268, (10, 6) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(2,1),ai.AI_STRATEGY_OFFENSIVE),
+        (269, (10, 5) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(2,0),ai.AI_STRATEGY_OFFENSIVE),
+        (270, (10, 4) , pawn.DIRECTION_UP, pawn.ARM_MELEE, pawn.MOBILE_WALK , 1 , False , True,None,(2,0),ai.AI_STRATEGY_OFFENSIVE)
     ]
 )
 
 
 test_mission.set_friend_roster(
     [
-        (280, (3, 3) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_WALK , 0 , False , True,None,(3,1) , ai.AI_STRATEGY_DEFENCE),
-        (280, (3, 7) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_WALK , 0 , False , True,None,(4,1) , ai.AI_STRATEGY_DEFENCE),
-        (281, (3, 4) , pawn.DIRECTION_DOWN, pawn.ARM_RANGE, pawn.MOBILE_WALK , 0 , False , True,None,(3,0) , ai.AI_STRATEGY_DEFENCE),
-        (281, (3, 6) , pawn.DIRECTION_DOWN, pawn.ARM_RANGE, pawn.MOBILE_WALK , 0 , False , True,None,(4,0) , ai.AI_STRATEGY_DEFENCE)
+        (280, (3, 3) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_WALK , 0 , False , True,None,(3,1) , ai.AI_STRATEGY_VERY_OFFENSIVE),
+        (280, (3, 7) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_WALK , 0 , False , True,None,(4,1) , ai.AI_STRATEGY_VERY_OFFENSIVE),
+        (281, (3, 4) , pawn.DIRECTION_DOWN, pawn.ARM_RANGE, pawn.MOBILE_WALK , 0 , False , True,None,(3,0) , ai.AI_STRATEGY_VERY_OFFENSIVE),
+        (281, (3, 6) , pawn.DIRECTION_DOWN, pawn.ARM_RANGE, pawn.MOBILE_WALK , 0 , False , True,None,(4,0) , ai.AI_STRATEGY_VERY_OFFENSIVE),
+        (280, (4, 3) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_WALK , 0 , False , True,None,(3,1) , ai.AI_STRATEGY_VERY_OFFENSIVE),
+        (280, (4, 6) , pawn.DIRECTION_DOWN, pawn.ARM_MELEE, pawn.MOBILE_WALK , 0 , False , True,None,(4,1) , ai.AI_STRATEGY_VERY_OFFENSIVE),
+        (281, (4, 4) , pawn.DIRECTION_DOWN, pawn.ARM_RANGE, pawn.MOBILE_WALK , 0 , False , True,None,(3,0) , ai.AI_STRATEGY_VERY_OFFENSIVE),
+        (281, (4, 7) , pawn.DIRECTION_DOWN, pawn.ARM_RANGE, pawn.MOBILE_WALK , 0 , False , True,None,(4,0) , ai.AI_STRATEGY_VERY_OFFENSIVE)
+
     ]
 )

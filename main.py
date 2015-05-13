@@ -55,10 +55,10 @@ def main():
     #
     #pawn_list = [yun , lvbu , zhouyu  , guanyu , weiwen]
     pawn_list = []
-    for roster in current_mission.player_roster:
-        p = pawn.Pawn(roster[1], roster[2], roster[3], roster[4], hero.hero_pool[roster[0]], roster[5], 0, roster[6],
-                      roster[7])
-        pawn_list.append(p)
+#    for roster in current_mission.player_roster:
+#        p = pawn.Pawn(roster[1], roster[2], roster[3], roster[4], hero.hero_pool[roster[0]], roster[5], 0, roster[6],
+#                      roster[7])
+#        pawn_list.append(p)
     for roster in current_mission.friend_roster:
         h = copy.copy(hero.hero_pool[roster[0]])
         p = pawn.Pawn(roster[1], roster[2], roster[3], roster[4], h, roster[5], 1, roster[6], roster[7])
@@ -120,6 +120,19 @@ def main():
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_p:
+                        if debug and selected_pawn:
+                            logger(  selected_pawn.status_info() )
+                            logger( logic_controller.target_info(selected_pawn) )
+                    elif event.key == pygame.K_n:
+                        control.status = control.CONTROL_STATUS_TURN_FINISHING
+                    elif event.key == pygame.K_m:
+                        if debug and selected_pawn:
+                            logger(  ai_controller.get_all_available_decision(selected_pawn , False) )
+                    elif event.key == pygame.K_a:
+                        if debug and selected_pawn:
+                            logger( ai_controller.get_all_available_decision(selected_pawn , True ))
 
             flag = False
 
@@ -132,23 +145,31 @@ def main():
             elif control.status != control.CONTROL_STATUS_TURN_FINISHING:
                 control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION 
                 flag = True
+            selected_pawn = gui_controller.get_selected_pawn(pawn_list)
             
-            if not flag:
-                control.status = control.CONTROL_STATUS_TURN_FINISHING
+           # if not flag:
+           #     control.status = control.CONTROL_STATUS_TURN_FINISHING
                 
             if control.status == control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION:
                 if not logic_controller.process_action_queue():
                     control.status = control.CONTROL_STATUS_IDlE
         else:
-
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return
-                if event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_p:
                         if debug and selected_pawn:
                             logger(  selected_pawn.status_info() )
                             logger( logic_controller.target_info(selected_pawn) )
+                    elif event.key == pygame.K_n:
+                        control.status = control.CONTROL_STATUS_TURN_FINISHING
+                    elif event.key == pygame.K_m:
+                        if debug and selected_pawn:
+                            logger(  ai_controller.get_all_available_decision(selected_pawn , False) )
+                    elif event.key == pygame.K_a:
+                        if debug and selected_pawn:
+                            logger( ai_controller.get_all_available_decision(selected_pawn , True ))
 
                 if control.status == control.CONTROL_STATUS_MENU_ATTACK_CHOOSE:
                     target = gui_controller.get_grid_on_mouse()
@@ -248,8 +269,8 @@ def main():
             control.CONTROL_STATUS_MENU_ITEM_SELECTING
         ):
             gui_controller.menu = None
-            gui_controller.draw_selection_frame()
-            gui_controller.side_menu(selected_pawn)
+        gui_controller.draw_selection_frame()
+        gui_controller.side_menu(selected_pawn)
 
         render_queue.sort()
 

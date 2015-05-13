@@ -463,7 +463,7 @@ class Logic:
 
         return ret
 
-    def targfet_can_be_attacked_by_pawn_from(self , target_position, pawn_info, position):
+    def target_can_be_attacked_by_pawn_from(self , target_position, pawn_info, position):
 
         return self.diff_position( position, target_position ) in pawn_info.range
 
