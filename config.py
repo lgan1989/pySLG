@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 
 FPS = 60
 clock = 0
@@ -11,7 +12,10 @@ if env == 'dev':
     f.close()
     def logger(msg):
         with open("log.txt" , "a") as log:
-            log.write(msg + '\n')
+            if sys.version_info[0] < 3:
+                log.write(msg.encode('utf-8') + '\n')
+            else:
+                log.write(msg + '\n')
 else:
     debug = False
     logger = None

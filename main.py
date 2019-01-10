@@ -28,7 +28,10 @@ def main():
     db = database.Database('localhost', 27017)
 
     pygame.init()
-    pygame.display.set_caption(u'武将大乱斗')
+    if sys.version_info[0] < 3:
+        pygame.display.set_caption((u'武将大乱斗').encode('utf-8'))
+    else:
+        pygame.display.set_caption(u'武将大乱斗')
 
     hero.initiate_hero_pool(db)
 
