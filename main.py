@@ -28,7 +28,7 @@ def main():
     db = database.Database('localhost', 27017)
 
     pygame.init()
-    pygame.display.set_caption((u'武将大乱斗').encode('utf-8'))
+    pygame.display.set_caption(u'武将大乱斗')
 
     hero.initiate_hero_pool(db)
 
@@ -260,7 +260,7 @@ def main():
             gui_controller.draw_selection_frame()
             gui_controller.side_menu(selected_pawn)
 
-        render_queue.sort()
+        render_queue.sort(key=lambda surface:surface[0])
 
         while render_queue:
             top = render_queue.pop()

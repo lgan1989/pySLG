@@ -65,8 +65,8 @@ class Map:
         self.team_count = team_count
         self.map_terrain_info = []
         self.map_collision_info = []
-        self.tile_row_number = self.map_height / DEFAULT_MAP_TILE_HEIGHT
-        self.tile_col_number = self.map_width / DEFAULT_MAP_TILE_WIDTH
+        self.tile_row_number = self.map_height // DEFAULT_MAP_TILE_HEIGHT
+        self.tile_col_number = self.map_width // DEFAULT_MAP_TILE_WIDTH
         self.map_image_file = image.load(DEFAULT_MAP_PATH + name + "/" + name + ".bmp")
         self.load()
 

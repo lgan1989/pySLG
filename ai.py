@@ -42,7 +42,7 @@ class AI:
 
         if debug:
             logger(u'{0}{1} is taking action, is_leader = {2}'.format(pawn_info.position, pawn_info.hero.name , pawn_info.is_leader))
-        
+
         if pawn_info.ai_status == AI_STATUS_IDLE:
             value, action = self.evaluated_movement(pawn_info , False)
             if action[0] == AI_ACTION_MOVE:
@@ -61,9 +61,9 @@ class AI:
             else:
                 logger(u'{0} at {1} decide to attack {2} at {3}'.format( pawn_info.hero.name , pawn_info.position , logic_controller.get_target_pawn(action[1]).hero.name , action[1] ))
                 pawn_info.next_move = [(AI_ACTION_ATTACK , action[1])]
-            
 
-                             
+
+
 
     def find_closest_enermy(self, pawn_info):
         closest_pawn = None
@@ -100,7 +100,7 @@ class AI:
 
                 enermy_list.append(  (v , p)  )
 
-        return sorted(enermy_list)
+        return sorted(enermy_list, key=lambda p:p[0])
 
 
 
@@ -111,7 +111,7 @@ class AI:
             valid_move = [pawn_info.position]
         else:
             valid_move = logic_controller.get_valid_move(pawn_info)
-        
+
         action_list = []
         for pos in valid_move:
             action_list.append( (AI_ACTION_MOVE , pos) )
@@ -139,7 +139,7 @@ class AI:
                 if rest == 0:
                     offence += enermy_value[ target_pawn.index ]
                 else:
-                    offence += enermy_value[target_pawn.index] * damage * 1.0 /target_pawn.hero.current_health 
+                    offence += enermy_value[target_pawn.index] * damage * 1.0 /target_pawn.hero.current_health
                 position_evl = self.evaluate_position( pawn_info, pawn_info.position ,enermy_value )
 
                 offence += position_evl[0]
@@ -162,7 +162,7 @@ class AI:
                         logger(u'[Attack {0}] [ offence : {1} , danger : {2}  ]'.format( logic_controller.get_target_pawn(tmp[1][1]).hero.name , tmp[0][0] , tmp[0][1]))
             return ret
         return None
-                    
+
     def evaluate_position(self, pawn_info, position , enermy_value):
         pawn_value = 100
         damage_take = 0

@@ -11,7 +11,7 @@ if env == 'dev':
     f.close()
     def logger(msg):
         with open("log.txt" , "a") as log:
-            log.write(msg.encode('utf-8') + '\n')
+            log.write(msg + '\n')
 else:
     debug = False
     logger = None
