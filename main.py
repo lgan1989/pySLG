@@ -28,7 +28,7 @@ def main():
     db = database.Database('localhost', 27017)
 
     pygame.init()
-    pygame.display.set_caption((u'武将大乱斗').encode('utf-8'))
+    pygame.display.set_caption(u'武将大乱斗')
 
     hero.initiate_hero_pool(db)
 
@@ -137,19 +137,19 @@ def main():
             flag = False
 
             if control.status == control.CONTROL_STATUS_IDlE:
-                ai_action = ai_controller.get_next_ai() 
+                ai_action = ai_controller.get_next_ai()
                 if ai_action != None:
                     flag = True
                     ai_controller.take_action( ai_action )
                     control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
             elif control.status != control.CONTROL_STATUS_TURN_FINISHING:
-                control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION 
+                control.status = control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION
                 flag = True
             selected_pawn = gui_controller.get_selected_pawn(pawn_list)
-            
+
            # if not flag:
            #     control.status = control.CONTROL_STATUS_TURN_FINISHING
-                
+
             if control.status == control.CONTROL_STATUS_PROCESSING_PLAYER_ACTION:
                 if not logic_controller.process_action_queue():
                     control.status = control.CONTROL_STATUS_IDlE
@@ -272,7 +272,7 @@ def main():
         gui_controller.draw_selection_frame()
         gui_controller.side_menu(selected_pawn)
 
-        render_queue.sort()
+        render_queue.sort(key=lambda surface:surface[0])
 
         while render_queue:
             top = render_queue.pop()

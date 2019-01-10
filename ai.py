@@ -52,7 +52,7 @@ class AI:
         """
         return logic_controller.get_valid_target(pawn_info)
 
-    
+
     def find_pawn_by_index(self, index):
         """
         @index : int
@@ -65,7 +65,7 @@ class AI:
 
     def take_action(self, ai_action):
         """
-        @ai_action: {KEY_INDEX:_ , KEY_ACTION : _} 
+        @ai_action: {KEY_INDEX:_ , KEY_ACTION : _}
         """
 
         pawn_info = self.find_pawn_by_index( ai_action[KEY_INDEX] )
@@ -73,7 +73,7 @@ class AI:
 
         if debug:
             logger(u'{0}{1} is taking action, is_leader = {2}'.format(pawn_info.position, pawn_info.hero.name , pawn_info.is_leader))
-        
+
         if pawn_info.ai_status == AI_STATUS_IDLE:
             if action[KEY_TYPE] == AI_ACTION_MOVE:
                 logger(u' {0} at {1} decide to move to {2}.'.format(pawn_info.hero.name , pawn_info.position , action[KEY_TARGET]))
@@ -98,7 +98,7 @@ class AI:
                 logic_controller.process_player_action(pawn_info, action_target)
             elif action_type == AI_ACTION_ATTACK:
                 logic_controller.process_player_action(pawn_info, action_target , logic.MENU_ORDER_ATTACK)
-            
+
     def find_closest_enermy(self, pawn_info):
         closest_pawn = None
         d = -1
@@ -133,7 +133,7 @@ class AI:
 
                 enermy_list.append(  (v , p)  )
 
-        return sorted(enermy_list)
+        return sorted(enermy_list, key=lambda p:p[0])
 
 
 
@@ -150,7 +150,7 @@ class AI:
             valid_move = [pawn_info.position]
         else:
             valid_move = logic_controller.get_valid_move(pawn_info)
-        
+
         action_list = []
         for pos in valid_move:
             action_list.append( { KEY_TYPE : AI_ACTION_MOVE , KEY_TARGET : pos } )
@@ -181,7 +181,7 @@ class AI:
                 if rest == 0:
                     offence += enermy_value[ target_pawn.index ]
                 else:
-                    offence += enermy_value[target_pawn.index] * damage * 1.0 /target_pawn.hero.current_health 
+                    offence += enermy_value[target_pawn.index] * damage * 1.0 /target_pawn.hero.current_health
                     damage_take = 0
                     if logic_controller.target_can_be_attacked_by_pawn_from(pawn_info.position , target_pawn , target_pawn.position):  #damage take
                         damage , ratio = logic_controller.calculate_damage(target_pawn , pawn_info)
@@ -206,8 +206,8 @@ class AI:
         ratio_danger = max_danger / 100.0
 
         for action in valued_action_list:
-            
-            action['values']['offence'] = 0 if ratio_offence == 0 else action['values']['offence'] / ratio_offence  
+
+            action['values']['offence'] = 0 if ratio_offence == 0 else action['values']['offence'] / ratio_offence
             action['values']['danger'] = 0 if ratio_danger == 0 else action['values']['danger'] / ratio_danger
             score = self.get_score_by_strategy(action['values']['offence'] , action['values']['danger'] , pawn_info.ai_strategy)
             action[KEY_SCORE] = score
@@ -223,12 +223,12 @@ class AI:
                         if tmp[KEY_ACTION][KEY_TYPE] == AI_ACTION_MOVE:
                             ret += u'[Move to {0}] [ score : {1} -> offence : {2} , danger : {3}]\n'.format(tmp[KEY_ACTION][KEY_TARGET] ,tmp[KEY_SCORE] , tmp['values']['offence'] , tmp['values']['danger'])
                         else:
-                            ret += (u'[Attack {0}] [ score : {1} -> offence : {2} , danger {3} ]\n'.format( logic_controller.get_target_pawn(tmp[KEY_ACTION][KEY_TARGET]).hero.name , tmp[KEY_SCORE] , tmp['values']['offence'] , tmp['values']['danger'])) 
+                            ret += (u'[Attack {0}] [ score : {1} -> offence : {2} , danger {3} ]\n'.format( logic_controller.get_target_pawn(tmp[KEY_ACTION][KEY_TARGET]).hero.name , tmp[KEY_SCORE] , tmp['values']['offence'] , tmp['values']['danger']))
                     ret += (u'=======================================================================\n')
                 logger(ret)
             return valued_action_list
         return None
-                    
+
     def get_all_available_decision(self , pawn_info , moved):
         valued_action_list = self.evaluated_movement(pawn_info , moved)
         if debug:
@@ -239,7 +239,7 @@ class AI:
                 if tmp[KEY_ACTION][KEY_TYPE] == AI_ACTION_MOVE:
                     ret += u'[Move to {0}] [ score : {1} -> offence : {2} , danger : {3}]\n'.format(tmp[KEY_ACTION][KEY_TARGET] ,tmp[KEY_SCORE] , tmp['values']['offence'] , tmp['values']['danger'])
                 else:
-                    ret += (u'[Attack {0}] [ score : {1} -> offence : {2} , danger {3} ]\n'.format( logic_controller.get_target_pawn(tmp[KEY_ACTION][KEY_TARGET]).hero.name , tmp[KEY_SCORE] , tmp['values']['offence'] , tmp['values']['danger'])) 
+                    ret += (u'[Attack {0}] [ score : {1} -> offence : {2} , danger {3} ]\n'.format( logic_controller.get_target_pawn(tmp[KEY_ACTION][KEY_TARGET]).hero.name , tmp[KEY_SCORE] , tmp['values']['offence'] , tmp['values']['danger']))
             ret += (u'=======================================================================\n')
             return ret
 
@@ -270,19 +270,19 @@ class AI:
             perc = 1 - delta * 1.0 / pawn_info.hero.current_health
             danger += pawn_value * perc
 
-        
+
         return offence , danger
-    
+
     def get_score_by_strategy(self , offence , danger , strategy):
         if strategy == AI_STRATEGY_VERY_OFFENSIVE:
             return offence * 0.8 - danger * 0.2
-        if strategy == AI_STRATEGY_OFFENSIVE: 
-            return offence * 0.6 - danger * 0.4 
+        if strategy == AI_STRATEGY_OFFENSIVE:
+            return offence * 0.6 - danger * 0.4
         if strategy == AI_STRATEGY_DEFENSIVE:
             return offence * 0.4 - danger * 0.6
         if strategy == AI_STRATEGY_VERY_DEFENSIVE:
             return offence * 0.2 - danger * 0.8
-    
+
     def get_next_ai(self):
         """
         Return next ai to excute ( action , index  )
@@ -319,7 +319,7 @@ class AI:
 
         if opp_cost_list:
             if debug:
-                ai_pawn = self.find_pawn_by_index( opp_cost_list[0][KEY_DECISION][KEY_INDEX] ) 
+                ai_pawn = self.find_pawn_by_index( opp_cost_list[0][KEY_DECISION][KEY_INDEX] )
                 logger(u'get next ai: {0} with cost: {1}, turn team = {2} , ai team = {3}'.format( ai_pawn.hero.name , opp_cost_list[0]['cost'] , logic_controller.turn_team , ai_pawn.turn_team ))
 
             return opp_cost_list[0][KEY_DECISION]
@@ -346,12 +346,12 @@ class AI:
 
                 moved = (p.ai_status == AI_STATUS_MOVED)
 
-                score_before = self.evaluated_movement(p , moved)[0][KEY_SCORE] 
+                score_before = self.evaluated_movement(p , moved)[0][KEY_SCORE]
 
                 logic_controller.put_pawn_to_position(pawn_info , position)
 
                 score_after = self.evaluated_movement(p , moved)[0][KEY_SCORE]
-                
+
                 cost += score_before - score_after
 
                 logic_controller.put_pawn_to_position(pawn_info , pos_backup)
@@ -359,7 +359,7 @@ class AI:
         for p in self.pawn_list:
             if p.turn_team == pawn_info.turn_team and p.has_ai and p.index != pawn_info.index and p.turn_finished == False:
                 moved = (p.ai_status == AI_STATUS_MOVED)
-                
+
                 action = self.evaluated_movement(p , moved)[0][KEY_ACTION]
                 position = p.position
                 if action[KEY_TYPE] == AI_ACTION_MOVE:
